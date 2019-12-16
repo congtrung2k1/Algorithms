@@ -1,0 +1,28 @@
+﻿Cho số N, tìm K thõa mãn N.K = X^2 với X là một số nguyên
+
+Input Format
+
+1 dòng duy nhất gồm số N
+
+Constraints
+
+1<=N<=10^12
+
+Output Format
+
+1 số duy nhất là số K
+
+Với mọi số nguyên N, ta đều có N = a * k (a: chính phương; k: không là số chính phương).  chính vì vậy chỉ cần tìm sqrt(a) lớn nhất rồi chia với N là đc k
+
+uses math;
+var i: longint;
+    n,k: qword;
+BEGIN
+  readln(n);
+
+  k:=1;
+  for i:=1 to trunc(sqrt(n)) do
+    if n mod (i*i)=0 then k:=n div (i*i);
+
+  writeln(k);
+END.

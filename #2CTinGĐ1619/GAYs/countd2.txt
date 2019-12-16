@@ -1,0 +1,138 @@
+﻿Cho trước 3 số a,b,c Đếm số lượng ước của số a*b*c.
+
+Input Format
+
+dòng đầu tiên là T là số lượng test case T dòng tiếp theo, mỗi dòng là 3 số a,b,c
+
+Constraints
+
+1<=T<=10^5
+
+1<=a,b,c <= 10^6
+
+Output Format
+
+T dòng, mỗi dòng là đáp án của test thứ i
+
+Sample Input 0
+
+9
+1 1 1
+2 2 2 
+3 3 3
+4 4 4
+5 5 5
+6 6 6
+7 7 7
+8 8 8
+9 9 9
+Sample Output 0
+
+1
+4
+4
+7
+4
+16
+4
+10
+7
+
+
+
+Giả sử N được phân tích thành thừa số nguyên tố: N = ai * bj * ... * ck
+Ước số của N là: ap * bq * ... * cr   (0 <= p <= i)
+Số các ước số là (i+1) * (j+1) * ... * (k+1)
+
+uses math;
+const fin='';
+        fout='';
+var f,g:text;
+        i,t,chay,k:longint;
+        s:int64;
+        a:array[1..4] of longint;
+ procedure sort(l,r: longint);
+      var
+         i,j,x,y: longint;
+      begin
+         i:=l;
+         j:=r;
+         x:=a[(l+r) div 2];
+         repeat
+           while a[i]<x do
+            inc(i);
+           while x<a[j] do
+            dec(j);
+           if not(i>j) then
+             begin
+                y:=a[i];
+                a[i]:=a[j];
+                a[j]:=y;
+                inc(i);
+                j:=j-1;
+             end;
+         until i>j;
+         if l<j then
+           sort(l,j);
+         if i<r then
+           sort(i,r);
+      end;
+begin
+
+
+        assign(f,fin);reset(f);
+        assign(g,fout);rewrite(g);
+        read(f,t);
+        for chay:=1 to t do
+        begin
+                readln(f,a[1],a[2],a[3]);
+                s:=1;
+                i:=1;
+                while i<trunc(sqrt(max(max(a[3],a[2]),a[1]))) do
+                begin
+                        if i<3 then inc(i)
+                        else inc(i,2) ;
+                        k:=0;
+                        while a[1] mod i=0 do
+                        begin
+                                a[1]:=a[1] div i;
+                                inc(k);
+                        end;
+                        while a[2] mod i=0 do
+                        begin
+                                a[2]:=a[2] div i;
+                                inc(k);
+                        end;
+                        while a[3] mod i=0 do
+                        begin
+                                a[3]:=a[3] div i;
+                                inc(k);
+                        end;
+                        s:=s*(k+1);
+                end;
+                sort(1,3);
+                i:=1;
+                a[4]:=0;
+                while a[i]=1 do
+                        inc(i);
+                if(i=4) then writeln(g,s)
+                else
+                if(i=3) then writeln(g,s*2)
+                else
+                if(i=2) and (a[2]=a[3]) then writeln(g,s*3)
+                else
+                if(i=2) and (a[2]<>a[3])then writeln(g,s*4)
+                else
+                begin
+                        t:=0;
+                        if a[1]=a[2] then inc(t);
+                        if a[2]=a[3] then inc(t);
+                        if t=2 then writeln(g,s*4);
+                        if t=1 then writeln(g,s*6);
+                        if t=0 then writeln(g,s*8);
+                end;
+
+        end;
+        close(f);
+        close(g);
+end.

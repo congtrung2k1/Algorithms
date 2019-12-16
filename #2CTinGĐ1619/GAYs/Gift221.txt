@@ -1,0 +1,47 @@
+﻿Ngày cuối năm đã đến. Cô giáo gọi cả lớp ra xếp hàng và lì xì cả lớp trước khi nghỉ Tết. Thành tích của học sinh được biểu diễn bằng một con số và người giáo viên đó muốn lì xì theo quy luật: với 2 người đứng cạnh nhau, người có thành tích ít hơn phải nhận được tiền ít hơn người có thành tích cao hơn và mỗi bạn phải được đảm bảo có tiền lì xì (ít nhất là 1$). Hãy tính số tiền ít nhất để người giáo viên đó lì xì hết cả lớp.
+
+Input Format
+
+Dòng đầu là số nguyên dương N <= 5.000.000 là số học sinh.
+
+Dòng tiếp theo là N số nguyên biểu diễn thành tích của N học sinh. (0 < a[i] < 1001).
+
+Output Format
+
+Số tiền ít nhất mà giáo viên cần để lì xì cả lớp.
+
+Sample Input
+
+3
+
+1 2 2
+
+Sample Output
+
+4
+
+Tính đỉnh cao nhất: trước ra sau, sau ra trc (tăng dần)
+
+uses math;
+var a,l,r: array [0..5000001] of longint;
+    n,i,sum: longint;
+
+BEGIN
+  read(n);
+
+  for i:=1 to n do
+    begin
+      read(a[i]);
+      if a[i]>a[i-1] then l[i]:=l[i-1]+1 else l[i]:=1;
+    end;
+
+
+  sum:=0;
+  for i:=n downto 1 do
+    begin
+      if a[i]>a[i+1] then r[i]:=r[i+1]+1 else r[i]:=1;
+      inc(sum,max(l[i],r[i]));
+    end;
+
+  writeln(sum);
+END.

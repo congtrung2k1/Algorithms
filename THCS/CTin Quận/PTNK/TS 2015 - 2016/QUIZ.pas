@@ -1,0 +1,19 @@
+var fi,fo: text;
+    i,j,n,dem,d,K: longint;
+
+BEGIN
+assign (fi,'QUIZ.INP'); reset(fi); read(fi,n,k); close(fi);
+
+dem:=0;
+for i:=1 to n-1 do
+  begin
+    d:=0;
+    for j:=1 to i do
+      if i mod j=0 then begin inc(d); if d>k then break; end;
+    if d=k then begin inc(dem);     writeln (i); readln;         end;
+  end;
+
+assign (fo,'QUIZ.OUT'); rewrite(fo); writeln(fo,dem);
+
+close(fo);
+END.

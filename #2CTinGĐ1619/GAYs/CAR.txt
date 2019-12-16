@@ -1,0 +1,125 @@
+﻿Một chiếc xe đang ở tọa độ (x1,y1); chiếc xe này cần di chuyển đến tọa độ (x2,y2). 
+Biết rằng xe chỉ đi được 1 trong 4 hướng có phương song song với hệ trục tọa độ. 
+Mỗi lần qua 1 tọa độ nguyên mới, xe tốn 1l xăng. Để tiết kiệm chi phí di chuyển, chiếc xe này sẽ tìm cách 
+đi đến ô (x2,y2) với lượng xăng tiêu tốn tối thiểu. 
+Câu hỏi đặt ra là có bao nhiều đường đi để lượng xăng bị hao hụt ít nhất như vậy?
+
+Input Format
+
+x1,y1,x2,y2 trên cùng 1 dòng và cách nhau ít nhất 1 khoảng trắng
+
+Output Format
+
+đáp án có thể rất lớn nên chỉ cần in ra số dư khi chia đáp án cho 1000000007
+
+Sample Input 0
+
+2 2 3 3
+Sample Output 0
+
+2
+
+Constraints
+
+x1,y1,x2,y2 <= 10^5
+
+
+n = |x2-x1| + |y2-y1|
+k = |y2-y1|
+
+C k/n = n! / k!(n-k)!
+
+Gọi tổng min là n, độ dài dọc là k.
+
+Mảng 2 chiều với công thức truy hồi
+C k/n  = C k-1/n-1 + C k/n-1
+
+cơ sở C n/n = C 0/n = 1
+         C 1/n = C n-1/n = n
+
+chứng minh bằng nhị phân:
+xét 2 trường hợp của dãy nhị phân đó có N bit, K bit 1.
+1: bit cuối cùng là bit 1
+trong N-1 bit còn lại phải có K-1 bit 1 (vì thêm 1 bit ở bit cuối mới đc K) do đó số dãy nhị phân 
+tương ứng với trường hợp 1 là C[n-1,k-1]
+2: bit cuối cùng là bit 0
+cần phải có k bit 1.
+
+
+
+
+uses math;
+const dd = 1000000007;
+var x1,y1,x2,y2,k,n,i,j,q,w: longint;
+    c: array [-1..10000,-1..10000] of longint;
+
+BEGIN
+    read(x1,y1,x2,y2);
+    k:=abs(y2-y1) mod dd;
+    n:=( (abs(x2-x1) mod dd) + k ) mod dd;
+
+    for i:=0 to n do begin c[i,i]:=1; c[0,i]:=1; end;
+    for i:=0 to n do begin c[1,i]:=i; c[i-1,i]:=i; end;
+
+    for j:=1 to n do
+      for i:=1 to min(k,n) do
+          C[i,j]:=((C[i-1,j-1] mod dd) + (C[i,j-1] mod dd)) mod dd;
+
+    writeln(C[k,n]);
+END.
+
+trường hợp có nhiều hơn 10^6
+
+const dd = 1000000007;
+var n,k,i,j,x1,y1,x2,y2: longint;
+    a: array [1..1000000] of longint;
+    sum: qword;
+
+procedure gt(i: longint);
+  var j: longint;
+  begin
+      if i<1 then exit;
+      for j:=2 to trunc(sqrt(n)) do
+        while i mod j = 0 do
+          begin
+              inc(A[j]);
+              i:=i div j;
+          end;
+      if i<>1 then inc(A[i]);
+  end;
+
+procedure dgt(i: longint);
+  var j: longint;
+  begin
+      if i<1 then exit;
+      for j:=2 to trunc(sqrt(n)) do
+        while (i mod j = 0) do
+          begin
+              dec(A[j]);
+              i:=i div j;
+          end;
+      if i<>1 then dec(A[i]);
+  end;
+
+BEGIN
+    read(x1,y1,x2,y2);
+    k:=abs(y2-y1) mod dd;
+    n:=(abs(x2-x1) mod dd + k) mod dd;
+
+    for i:=1 to n do
+      begin
+          gt(i);
+          if i<=k then dgt(i);
+          if i<=(n-k) then dgt(i);
+      end;
+
+    sum:=1;
+    for i:=1 to n do
+      if A[i]<>0 then
+        begin
+            for j:=1 to A[i] do sum:=sum*i;
+            sum:=sum mod dd;
+        end;
+
+    writeln(sum);
+END.

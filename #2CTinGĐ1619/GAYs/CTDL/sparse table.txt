@@ -1,0 +1,24 @@
+﻿A có N pt <= 10^5
+Cho Q truy vấn tìm min L..R
+
+gọi S[i,x] là min dãy có 2^i pt và kết thúc tại x
+
+->				2^4
+-> 		2^3 				2^3
+-> 	2^2  		2^2		2^2 		2^2
+-> 	2^1 2^1      	2^1 2^1 	2^1 2^1 	2^1 2^1
+
+Sparse Table 
+	1 4 5 6 3 7 5
+S[0.]   1 4 5 6 3 7 5
+S[1.]	1 1 4 5 3 3 5
+S[2.]	1 1 1 1 3 3 3
+
+công thức S[i,x] = S[ S[i-1 , x] , S[i-1 , x-2^(i-1)]  ] 
+
+với 1->i-1 trong S[i.] sẽ không cần quan tâm vì thuật:
+
+với delta(R-L)
+i <- log(length) - 0
+	giảm delta : delta-2^i nếu dương.
+	min lấy của đoạn delta và del-2^i

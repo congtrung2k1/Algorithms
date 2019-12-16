@@ -1,0 +1,53 @@
+﻿Solution 
+Cách 1 
+Rời rạc hóa nó bằng cách sort giảm dần + loại bỏ các số giống nhau 
+ví dụ  28133 - > 8321
+
+Sau đó nhận xét với 9 số, tao có thể tạo ra được tập X với 2^10 số tăng dần
+Giải thích 
+9 8 7 6 5 4 3 2 1 0, mỗi số có 2 trạng thái, và tất cả trạng thái đều thõa mãn thuộc tính giảm dần. 
+
+Nhận xét là sau khi rời rạc hóa và sort giảm dần, 1 số luôn là tập con của X 
+
+=> lùa vào tập X với vị trí 2^ chữ số 
+vd 8321 vị trí của nó trong tập X là 2^8 + 2^3 + 2^2 + 2^1 
+Với mỗi số ai trong tập X, tạo 1 mảng thứ 2 để dánh dấu bằng với mảng X
+vd vị trí thứ 2^8 + 2^3 + 2^2 + 2^1 sẽ đánh dấu trong mảng 2 các vị trí + thêm bằng vối số lượng của X[i] 
+2^1
+2^2
+2^3
+2^8
+2^1 +2^2
+2^1 + 2^3 
+2^1 +2^8 
+2^2….
+
+2^8 + 2^3 + 2^2 + 2^1 
+
+Ta tiếp tục nhận xét, kĩ thuật ta vừa dùng được gọi là đánh dấu bit. Tại sao lại phải làm như thế, làm như thế cải thiện được điều gì ???! => ta vừa lùa n số trong khoảng từ 0..10^18 vào mảng từ 0..2^10 số.	
+
+Sau chuyên đề ta vừa học thì chắc chắn sẽ làm ta có chút liên hệ với tổ, chỉnh hợp. Ta nhớ đến bài toàn đã nói trước đó về số lần xuất hiện của chữ số. Ta sinh hết từ 0 - 2^10 của mỗi số từ 0 - 2^10  ( Hãy đọc chậm lại khúc này vì có thể hơi khó hiểu) tức là ta sinh hết dãy con của từng dãy con trong tập X vào mảng Y.
+
+Vậy mảng Y của chúng ta lúc này là gì ? Y[i] của chúng ta mang giá trị gì. Số lần xuất hiện của trạng thái i trong n mã chúng ta cần tìm
+
+Việc cuối cùng chỉ còn là với những số có số lượng bit lẻ thì +, chẵn thì - đi Y[i]C2 của nó. Ta có được kết qua cần tìm.
+
+
+code mẫu: http://ideone.com/aDoOA1
+
+
+
+Sau khi cài được cách 1, các em mới nên tiếp tục đọc trang này
+
+
+Cách 2
+
+Luôn luôn nghĩ đến cách đơn giản nhất đầu tiên ( theo yêu cầu đề bài ) 2 dòng for, if tồn tại 1 kí tự giống nhau => inc(count) ? (*)
+1 Lưu ý của anh ở đây, đừng bao giờ quên đi bất kỳ hướng nhìn nào của mình về bài toán.
+Tại sao anh lại nói như v ? Hiện tại vấn đề tụi em đang gặp là gì ? n = 10^5 ? số lượng chữ số là 18 chữ số ?! Vậy hãy giải quyết nó. Ở đây anh có 1 cách khác 
+
+Sau khi giải quyết được bước vừa n số trong khoảng từ 0..10^18 vào mảng từ 0..2^10 số. 10^6 đã chuyển thành 2^10. điều kiện if chỉ nằm ở 1 phép and. Ai hiểu được thì hiểu :)))
+
+cả 2 đều có đpt O(2^20).	
+
+

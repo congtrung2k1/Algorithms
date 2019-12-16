@@ -1,0 +1,72 @@
+﻿biểu thức A có N số hạng tuy nhiên biểu thức đã bị mất hết dấu rồi :< biết rằng các dấu trong biểu thức chỉ có thể là + hoặc – hoi bởi vì con bò cũng như hihoheha2808 đều có 4 chân.
+
+Cho Q truy vấn, mỗi truy vấn có 1 số K, cần cho biết có cách đặt dấu sao cho biểu thức A cho ra giá trị K được hay không :>
+Input Format
+
+dòng đầu N
+N dòng tiếp theo chứa các số hạng của biểu thức A
+dòng kế nữa cho Q
+Q dòng cuối, mỗi dòng là 1 số K
+Constraints
+
+N<=1000 A[i]<10 Q<=1000 |K|<=1000
+
+40% số test có N<=20
+40% số test có N<=200, Q<=100
+20% gồm các thể loại test chặn điểm và max test
+Output Format
+
+Q dòng tương ứng với Q câu trả lời: “yes” cho câu trả lời không và “no” cho câu trả lời có
+
+Sample Input 0
+
+3
+1
+2
+3
+4
+0
+7
+2
+-6
+Sample Output 0
+
+no
+yes
+no
+yes
+
+
+
+Áp dụng thuật toán cái tui nhưng ở đây chỉ xét 2 trường hợp: đặt dấuu cộng hay dấu trừ 
+t + a[i] hay t - a[i]
+
+
+
+var a: array [1..1000] of longint;
+    lt,ls: array [-10000..10000] of boolean;
+    n,i,sum,t,q: longint;
+
+BEGIN
+    read(n);
+    for i:=1 to n do read(A[i]);
+    sum:=A[1];
+    fillchar(lt,sizeof(lt),false); lt[a[1]]:=true;
+    fillchar(ls,sizeof(ls),false);
+    for i:=2 to n do
+      begin
+          sum:=sum+a[i];
+          for t:=-sum to sum do
+            begin
+                ls[t]:= lt[t-a[i]] or lt[t+a[i]];
+            end;
+          lt:=ls;
+          fillchar(ls,sizeof(ls),false);
+      end;
+    read(q);
+    for i:=1 to q do
+      begin
+          read(sum);
+          if lt[sum] then writeln('no') else writeln('yes');
+      end;
+END.

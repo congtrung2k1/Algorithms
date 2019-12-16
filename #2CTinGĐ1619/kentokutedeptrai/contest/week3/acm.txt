@@ -1,0 +1,6 @@
+﻿acm DP
+F(task,i) là chi phí nhỏ nhất để chia bt từ task tới n với i là người được chia task -1
+xét 2 TH
+trg hợp thằng i thực hiện task và thằng tiếp theo thực hiện task
+lấy min
+lưu ý trường hợp ở biên thôi là dc r

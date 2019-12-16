@@ -1,0 +1,43 @@
+﻿Cho 3 dãy số A, B, C. Mỗi dãy số gồm n phần tử, tìm 3 số Ai, Bj, Ck sao cho tích của chúng là lớn nhất. Biết rằng i < j < k.
+
+Input Format
+
+Dòng đầu tiên là số N
+3 dòng tiếp theo, mỗi dòng gồm N phần tử của lần lượt 3 dãy A, B, C.
+Constraints
+
+3 <= N <= 10^5 0 <= Ai, Bj, Ck <= 10^5
+
+Output Format
+
+Gồm 1 số duy nhất là tích lớn nhất tìm được.
+
+
+
+
+uses math;
+var a,b,c,l,r: array [0..100001] of longint;
+    n,i: longint;
+    kq: qword;
+
+BEGIN
+  read(n);
+
+  for i:=1 to n do
+    begin
+        read(a[i]);
+        l[i]:=max(a[i],l[i-1]);
+    end;
+
+  for i:=1 to n do read(b[i]);
+  for i:=1 to n do read(c[i]);
+
+  kq:=0;
+  for i:=n downto 1 do
+    begin
+        r[i]:=max(c[i],r[i+1]);
+        kq:=max(kq,l[i-2]*b[i-1]*r[i]);
+    end;
+
+  writeln(kq);
+END.

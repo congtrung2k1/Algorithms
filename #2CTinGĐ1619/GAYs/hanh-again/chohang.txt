@@ -1,0 +1,72 @@
+﻿Một kho hàng có N thùng hàng được đánh số từ 1 đến N. Thùng hàng thứ i có trọng lượng là pi . Người ta dùng hai chiếc tàu thuỷ để chở các thùng hàng này đến một kho khác, trọng tải của mỗi tàu là M. Hãy tính xem hai tàu này có thể chở nhiều nhất là bao nhiêu thùng hàng (mỗi tàu chỉ chở một chuyến).
+
+Input Format
+
+Dòng đầu là 2 số nguyên dương N, M Dòng tiếp theo ghi N số nguyên dương pi
+
+Constraints
+
+N <= 10000, M <= 50000 pi <= M
+
+Output Format
+
+duy nhất một số, là số nhiều nhất thùng hàng mà hai tàu chở được
+
+Sample Input 0
+
+6 16
+4 9 6 8 4 12
+Sample Output 0
+
+5
+
+
+Sắp đc nhiều thùng nhất khi xếp đc nhiều thùng có khối lượng nhỏ nhất.
+Sort từ nhỏ đến lớn, rồi prefix sum lấy i-1 <= 2*m
+
+
+var n,m,i: longint;
+    a,l: array [0..100000] of longint;
+
+procedure sort(l,r: longint);
+  var i,j,x,t: longint;
+  begin
+      i:=l; j:=r;
+      x:= A[(i+j) div 2];
+
+      repeat
+          while (a[i]<x) do inc(i);
+          while (a[j]>x) do dec(j);
+
+          if not(i>j) then
+            begin
+                t:=a[i]; a[i]:=a[j]; a[j]:=t;
+                inc(i); dec(j);
+            end;
+      until i>j;
+
+      if l<j then sort(l,j);
+      if i<r then sort(i,r);
+  end;
+
+procedure init;
+  var i: longint;
+  begin
+      read(n,m);
+      for i:=1 to n do read(a[i]);
+      sort(1,n);
+  end;
+
+BEGIN
+    init;
+
+    a[0]:=0;
+    for i:=1 to n do
+      begin
+          l[i]:=l[i-1]+a[i];
+          if l[i] > 2*m then break;
+      end;
+
+    writeln(i-1);
+END.
+

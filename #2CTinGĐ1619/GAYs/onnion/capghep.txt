@@ -1,0 +1,44 @@
+﻿Cho số nguyên dương n, đếm số cách chia các số từ 1 đến 2n thành n
+
+nhóm, mỗi nhóm gồm hai số mà giá trị tuyệt đối của hiệu hai số trong
+
+1 nhóm bằng giá trị tuyệt đối của hiệu hai số trong nhóm khác
+
+Input Format
+
+1 Dòng gồm số nguyên dương n
+
+Constraints
+
+n <=10^9
+
+Output Format
+
+Kết quả tương ứng
+
+Sample Input 0
+
+13
+Sample Output 0
+
+2
+
+
+
+Đếm số ước tương đương việc đếm số nhóm có thể chia được 
+
+
+
+var n,i,dem: longint;
+BEGIN
+    read(n);
+
+    dem:=0;
+    for i:=1 to trunc(sqrt(n)) do
+      begin
+          if n mod i = 0 then inc(dem,2);
+      end;
+
+    writeln(dem);
+END.
+

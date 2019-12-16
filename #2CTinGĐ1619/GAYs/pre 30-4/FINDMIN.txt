@@ -1,0 +1,60 @@
+﻿Ai ai cũng hứng thú với bài toán tìm số nhỏ nhất trong đoạn L,R cho trước. 
+NoBrainShine cũng là một người như vậy. Vì ocschos quá ngu, NoBrainShine với mục tiêu nâng 
+cao trình độ cho ocschos, đố bài toán sau: Cho số M và N số nguyên dương, ocschos cần xuất 
+ra giá trị nhỏ nhất của mỗi đoạn liên tiếp có M phần tử
+
+Input Format
+
+Dòng đầu là hai số N,M Dòng thứ hai là N số nguyên dương.
+
+Constraints
+
+Subtask 1: có 40% test có 1<= M,N <=1000 và 1<=Ai<=1000 
+Subtask 2: có 60% test có 1<= M,N <=10^5 và 1<=Ai<=10^9
+
+Output Format
+
+N-M+1 số là kết quả của các đoạn liên tiếp có M phần tử
+
+Sample Input 0
+
+5 3
+1 2 3 4 5
+Sample Output 0
+
+1 2 3
+
+
+
+
+Dùng subfix refix theo đoạn m phần tử
+
+
+
+uses math;
+var n,m,i: longint;
+    A,L,R: array [0..1000000] of int64;
+
+BEGIN
+    read(n,m);
+    L[0]:=maxlongint;
+    for i:=1 to n do
+      begin
+          read(A[i]);
+          if i mod m = 1 then L[i]:=A[i]
+          else if A[i] < L[i-1] then L[i]:=A[i] else L[i]:=L[i-1];
+      end;
+
+    R[n+1]:=maxlongint;
+    for i:=n downto 1 do
+      if i mod m = 1 then R[i]:=A[i]
+      else if A[i] < R[i+1] then R[i]:=A[i] else R[i]:=R[i+1];
+
+    for i:=1 to n-m+1 do
+      write(min(R[i],L[i+m-1]),' ');
+END.
+
+
+
+
+

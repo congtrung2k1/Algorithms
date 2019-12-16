@@ -1,0 +1,22 @@
+﻿T[i]: Sum of  S(i - i AND (-i) + 1 , i )
+
+GET (T,i)
+1 s ← 0
+2 while i > 0 do
+3          s ← s + T[i]
+4          i ← i – i and (-i)
+5 return s
+
+SET (T,i,v)
+1 while i ≤ size[T] do
+2          T[i] ← T[i] + v
+3          i ← i + i AND (-i) 
+
+
++ Nếu nút có chỉ số i lẻ thì cha của nút i là cha[i]= i+1
+
++ Nếu nút có chỉ số i chẵn thì cha của nút i là cha[i]=2*cha[i div 2]
+
+for (; x <= 200001; x = x | (x + 1))
+
+for (; x >= 0; x = (x & (x + 1)) - 1)

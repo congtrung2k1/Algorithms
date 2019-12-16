@@ -1,0 +1,16 @@
+﻿Cần chia hết m phần thưởng cho n học sinh sắp theo thứ tự từ giỏi trở xuống sao cho mỗi bạn 
+không nhận ít phần thưởng hơn bạn xếp sau mình. (trước nhiều hơn sau)
+
+Gọi Chia(m,n) là số cách chia m phần thưởng cho n học sinh, ta thấy: 
+1.1. Nếu không có học sinh nào (n=0) thì không có cách chia nào. (Chia=0). 
+1.2. Nếu không có phần thưởng nào (m=0) thì chỉ có một cách chia (Chia=1 - mỗi học sinh nhận 0 phần thưởng). Ta cũng quy ước Chiă0,0)=1.
+1.3. Nếu số phần thưởng ít hơn số học sinh (m<n) thì đó là cách chia m số kẹo cho n-1 học sinh. 
+1.4. Ta xét trường hợp m>=n. Ta tách các phương án chia thành hai nhóm không giao nhau: 
+ - Nhóm thứ nhất gồm các phương án trong đó học sinh thứ n không được nhận thưởng, 
+tức là m phần thưởng chỉ chia cho n-1 học sinh và do đó số cách chia, tức là số phần tử của nhóm này 
+sẽ là: Chia(m,n-1). 
+ - Nhóm thứ hai gồm các phương án mà học sinh thứ n cũng được nhận thưởng. 
+Khi đó, do học sinh đứng cuối bảng thành tích được nhận thưởng thì mọi học sinh khác cũng sẽ có thưởng. 
+Do ai cũng được thưởng nên ta bớt của mỗi người một phần thưởng (để họ lĩnh sau), số phần thưởng còn lại 
+(m-n) sẽ được chia cho n học sinh. Số cách chia khi đó sẽ là Chia(m-n,n). 
+ - Tổng số cách chia cho trường hợp m>=n sẽ là tổng số phần tử của hai nhóm, ta có: Chiăm,n)=Chiăm,n-1)+Chiăm-n,n).

@@ -1,0 +1,90 @@
+﻿cho N hộp kẹo ^^ hộp kẹo thứ i có i kẹo. cần chọn ra K kẹo trong cùng 1 hộp bất kì 
+và hỏi rằng có bao nhiêu cách chọn như vậy (mod 10e9+7)
+
+Input Format
+
+2 dòng lần lượt chứa 2 số nguyên N, K
+
+Constraints
+
+1 <= N, K <= 10e5
+
+Output Format
+
+1 số nguyên di nhất là số cách chọn theo yêu cầu bài toán mod 10e9+7
+
+Sample Input 0
+
+3
+2
+Sample Output 0
+
+4
+
+
+
+
+
+Chỉ có thể chọn với k nhỏ hơn hoặc bằng n
+Có thể chứng minh bằng nhị phân giống bài CAR
+Chứng minh bằng mảng 2 chiều dựa theo bài CAR, ta cũng có công thức: C k+1\n+1
+Ta có thể chứng minh đc với n! / k!(n-k)!  , số mũ tử luôn lớn hơn sỗ mũ mẫu
+
+const  dd = 1000000007;
+var a: array [1..1000000] of longint;
+    n,k,i,j: longint;
+    sum: qword;
+
+procedure pt(i: longint);
+  var j: longint;
+  begin
+      if i<=1 then exit;
+      for j:=2 to trunc(sqrt(i)) do
+        while (i mod j=0) do
+          begin
+              inc(a[j]);
+              i:=i div j;
+          end;
+      if i>1 then inc(a[i]);
+  end;
+
+procedure dpt(i: longint);
+  var j: longint;
+  begin
+      if i<=1 then exit;
+      for j:=2 to trunc(sqrt(i)) do
+        while (i mod j=0) do
+          begin
+              dec(a[j]);
+              i:=i div j;
+          end;
+      if i>1 then dec(a[i]);
+  end;
+
+BEGIN
+    read(n,k);
+    if k>n then
+      begin
+          writeln(0);
+          halt;
+      end;
+
+    inc(n); inc(k);
+    fillchar(a,sizeof(a),0);
+    for i:=1 to n do
+      begin
+          pt(i);
+          if i<=k then dpt(i);
+          if i<=n-k then dpt(i);
+      end;
+
+    sum:=1;
+    for i:=1 to n do
+      if a[i]>0 then
+        begin
+            for j:=1 to a[i] do sum:=sum*i;
+            sum:=sum mod dd;
+        end;
+
+    writeln(sum);
+END.

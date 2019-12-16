@@ -1,0 +1,22 @@
+﻿kt[1]:=true;
+i:=2;
+while i<=trunc(sqrt(n)) do 
+  begin
+      while kt[i]=true do inc(i);
+      for j:=2 to n div i then kt[i*j]=true;	
+  end;
+
+--------------------------------------------------------------------------------------------------
+kt[1]:=true;
+For i:=2 to trunc(sqrt(n)) do 
+    if kt[i]=false then 
+        for j:=1 to n div i do kt[i*j]:=true;
+
+
+
+ước ngtố lớn nhất
+--------------------------------------------------------------------------------------------------
+      for i:=1 to 2000000 do u[i]:=i;
+      for i:=2 to 2000 do
+        if u[i]=i then
+          for j:=1 to 2000000 div i do u[i*j]:=i;

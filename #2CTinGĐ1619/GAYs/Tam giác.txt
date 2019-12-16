@@ -1,0 +1,15 @@
+﻿Tìm bộ 3 tam giác vuông
+---------------------------------------------------------------------------------------------
+Vét 2 mảng a b, đến mảng c dùng lùa để xác định số lượng tam giác. c2 = a2 + b2
+Trường hợp c k là cạnh huyền: max(a,b)2 = min(a,b)2 + c2
+
+
+
+Tìm bộ 3 tam giác
+a + b > c
+b + c > a
+a + c > b
+
+==> |a-b| < c < a+b
+
+Vét a, b. C[L..R] với L = |a-b| + 1   ,    R = a + b - 1

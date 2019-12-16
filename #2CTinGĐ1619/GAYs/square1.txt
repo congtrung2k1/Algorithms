@@ -1,0 +1,28 @@
+﻿Ở bài toán này, trước tiên ta có nhận xét như sau 
+
+Để chọn ra 6 số chia thành 4 tổng bằng nhau thì chỉ có thể là 1 trong 2 dạng sau:
+- 2 cạnh được tạo bằng tổng của 2 số (sử dụng 4 số) và 2 cạnh còn lại mỗi cạnh một số.
+- 1 cạnh sử dụng 3 số để tạo thành tổng và 3 cạnh còn lại sử dụng 1 số.
+
+Như vậy ta thấy rằng các giá trị có thể có của các cạnh hình vuông chỉ có thể là các giá trị đã có của N phần tử. Như vậy ta có thể sort lại mảng và đếm số lượng xuất hiện của mỗi loại giá trị trong mảng đó (sort lại để xử lý 2 bước tiếp theo dưới đây). Việc tính toán mỗi cạnh được tạo bởi 1 số là đơn giản, vấn đề bây giờ chỉ còn là làm sao tính được số cách tạo ra 1 cạnh độ dài X bằng 2/3 phần tử nhỏ hơn.- Trước tiên là tổng 2 phần tử: cái này dễ dàng ta tính được các cách tạo ra cạnh X bằng tổng 2 giá trị nhỏ hơn trong độ phức tạp O(N^2): chọn 2 phần tử bất kì và tăng đếm số cách tạo ra tổng của 2 phần tử đó lên 1.- Số cách tạo ra tổng của 3 phần tử: ta vẫn có thể giải quyết được trong O(N^2) nhờ nhận xét là tổng 3 cạnh > max(a1..an) thì không cần thiết, bằng cách sử dụng kết quả ở bước trên, cách làm tương tự. 
+
+
+
+TH 3-1-1-1
+
+Thì với n tổng khác nhau mình sẽ chạy trong n^2
+Đầu tiên khởi tạo bằng cách
+Chạy for n^2 để đếm xem có bao nhiêu cặp có tổng là x
+Đưa vô mảng đếm pp
+Giả sử mình đang cần đếm cho tổng s
+Thì chỉ việc for các phần tử nhỏ hơn s
+Rồi đếm 2 phần tử còn lại dùng cái mảng đếm pp vừa rồi
+
+Lưu ý ở đây chính là phải trừ phần trùng
+Bằng cách đếm xem phần tử i vừa for có đóng góp bao nhiêu vô cái mảng pp kia
+Giải thích: Ở đây ai do đã xài ai nên ai không có quyền xuất hiện trong việc tạo ra thằng tổng s-ai nên phải trừ bớt pp1[s-ai-ai]
+
+
+TH 2-2-1-1
+
+Số cách chọn 2 cạnh 1 thì dễ rồi giờ chọn 2 cạnh 2, giả sử a,b tạo 1 cạnh, c,d tạo 1 cạnh, a<b, c<d a+b = c+d nếu b = d = x -> a = c = y -> số cách chọn 2 phần tử giá trị x * số cách chọn 2 phần tử giá trị y nếu b > d -> a < c -> số cách chọn 1 phần tử giá trị b nhân số cách chọn 1 phần tử giá trị a nhân số cách chọn 2 phần tử tổng a&b mà các số hạng < b

@@ -1,0 +1,744 @@
+/*
+$(document).ready(function(){
+	$("#btn-embed").popover({
+		'placement': 'left',
+		'title': 'Share widget',
+		'content': 'screen jak to wyglada'
+	});
+	$("#btn-embed").click(function(){
+		$(this).next().fadeIn();
+	});
+});
+*/
+
+//sprawdzanie statusu zgłoszenia zgłoszonego ze strony view
+//jesli edit = true, tzn. ze chodzi o edycje
+function load2(solution_link, lp, edit){
+ var status_code = statusCodes[solution_link]; //$('#status_code').val();
+ if( status_code == undefined ){
+ 	return;
+ }
+	if( status_code == 0 ){
+		
+		
+		
+		return;
+	}
+	
+	var isEditorOn = $('#syntax').is(':checked');
+	if(isEditorOn) {
+		var editor = ace.edit("file_div");
+	    editor.focus();
+	} else {
+		$('#view_edit_file').focus();
+	}
+	
+	//$("#li_"+solution_link).html(loader_img + ' Loading...');
+ 
+ 
+	queueApplManager.add({
+         type: "POST",
+         url: "/ideone/Index/view/id/"+solution_link+"/ajax/1/lp/"+lp,
+         dataType: 'json',
+         success: function(data){
+        	 $("#view_edit_output_btn").click();
+        	 	var $li = $("#view_edit_output > ul > .new");
+ 				if( data.status == 0 ){
+ 					$li.find('.title').html(data.html_full);
+ 					var out = '';
+ 					if(data.cmperr != '') out = out + data.cmperr + '\n';
+ 					if(data.stdout != '') out = out + data.stdout + '\n';
+ 					$li.find('pre').removeClass('hidden').html(out);
+ 					$li.removeClass('new');
+ 					//$("#view_edit_output").html(data.html + '<br/>' + data.cmperr + '<br/>' + data.stdout);
+ 					
+ 					/*
+ 					$("#li_"+solution_link).html(data.inouterr);
+ 					//bindInOutErrLinks();
+ 					if(!edit) { // jesli nie edit (nowy input) to dodajemy nowy link-numerek
+	    					$("#view_numbers").html(
+	    						"<a class=\"inouterr_number_link\" href=\"#li_"
+	    						+ solution_link + "\">#<span style=\"font-size:6px;\"> </span>"
+	    						+ lp + "</a> "
+	    						+ $("#view_numbers").html()
+	    					);
+	    					$("#view_numbers").show('fast');
+	    					bindClickNumberLinks();
+ 					}	
+ 					if( data.result > 8 && data.result != 12 && data.result != 13 && data.result != 15 && data.result != 17 ){
+ 						$("#new_item").hide('fast');
+ 						$(".inouterr_input_button_span").hide();
+ 					} else {
+ 						$("#new_item").show('fast');
+ 						$(".inouterr_input_button_span").show();
+ 					}
+ 					if( data.any_cmperr ){
+ 						//$("#err>pre").html(data.cmperr); // (wiele:) tę linijkę zamieniłem na dwie poniższe z powodu IE8 (po stronie serwera też się trochę zmieniło (obsługa za pomocą ideone/view_cmperr.html))
+ 						$("#err").html("");	// (wiele:) bez tej linijki IE8 będzie miał problemy
+ 						$("#err").html(data.cmperr);
+ 						$("#err").show('fast');
+ 					} else {
+ 						$("#err").hide('fast');
+ 					}
+ 					$("#li_"+solution_link+" a.inout_link").click(); // pokazanie bloku
+ 					if(edit){
+ 						$("#view_edit_still_running_msg").hide();
+ 					}
+ 					// --- begin of aktualizacja dat
+     				var link = "";
+ 					// aktualizacja dat zgłoszeń potomnych
+ 					for(link in data.dates) {
+ 						$("#li_" + link + " span.date_span").html( data.dates[link] );
+ 					}
+ 					// aktualizacja daty zgłoszenia głównego (na dole)
+ 					$("#li_" + $('#solution_link').val() + " span.date_span").html( data.parent_date );
+ 					// aktualizacja daty zgłoszenia głównego (u góry)
+ 					$("#solution_date").html( data.parent_date );
+ 					// --- end of aktualizacja dat
+ 					*/
+ 					
+ 					$("#view_edit_box_inside .status").html(data.html_full);
+ 				} else {
+ 					$("#view_edit_box_inside .status").html(loader_img + data.html);
+ 					$li.find('.title').html(data.html);
+ 				}
+ 				statusCodes[solution_link] = data.status;
+ 				//handlePoolData(data.pools);
+				setTimeout("load2('"+solution_link+"',"+lp+","+edit+");", 1000);
+         },
+         error: function(err,a,b){
+         		$("#li_"+solution_link).html('Error, please refresh the page');
+         		$("#new_item").show('fast');
+         }
+ });
+}
+
+
+//standardowe sprawdzanie statusu po wejściu na stronę zgłoszenia
+function load(){
+ var solution_link = $('#solution_link').val();
+ var status_code = $('#status_code').val();
+ if( status_code == undefined ){
+ 	return;
+ }
+	if( status_code == 0 ){
+		return;
+	}
+	
+	//$("#li_"+solution_link).html(loader_img + ' Loading... ');
+	//$("#view_status > span").html(loader_img + ' Loading... ');
+ 
+	queueApplManager.add({
+         type: "POST",
+         url: "/ideone/Index/view/id/"+solution_link+"/ajax/1/lp/1",
+         dataType: 'json',
+         success: function(data){
+        	 	
+ 				if( data.status == 0 ){
+ 					$("#li_"+solution_link).html("");
+ 					$("#li_"+solution_link).html(data.output);
+ 					
+ 					$("#view_output_copy").show();
+ 					$('#view_output_copy').zclip({
+ 				        path:'/gfx2/libs/zclip/ZeroClipboard.swf',
+ 				        copy:function(){ return $('#output-text').text() }
+ 				    });
+
+ 					$("#view_stderr_copy").show();
+ 					$('#view_stderr_copy').zclip({
+ 				        path:'/gfx2/libs/zclip/ZeroClipboard.swf',
+ 				        copy:function(){ return $('#stderr-text').text() }
+ 				    });
+ 					
+ 					$("#view_status > span").html(data.html);
+ 					
+ 					//bindInOutErrLinks();
+ 					/*
+ 					if( data.result == 12 || data.result == 13 || data.result == 15 || data.result == 17 ){
+ 						$("#new_item").show('fast');
+ 					}
+ 					if( data.any_cmperr ){
+ 						//$("#err>pre").html(data.cmperr); // (wiele:) tę linijkę zamieniłem na dwie poniższe z powodu IE8 (po stronie serwera też się trochę zmieniło (obsługa za pomocą ideone/view_cmperr.html))
+ 						$("#err").html("");	// (wiele:) bez tej linijki IE8 będzie miał problemy
+ 						$("#err").html(data.cmperr);
+ 						$("#err").show('fast');
+ 					}
+ 					$("#li_"+solution_link+" a.inout_link").click(); // pokazanie bloku
+ 					*/
+ 				}
+ 				else {
+ 						$("#view_status > span").html(loader_img + data.html);
+	    				//$("#li_"+solution_link).html( $("#li_"+solution_link).html() + data.html);
+ 				}
+ 				$('#status_code').attr('value', data.status);
+ 				//handlePoolData(data.pools);
+				setTimeout(load, 1000);
+         },
+         error: function(err,a,b){
+        	 //$("#li_"+solution_link).html('Server communication failure. Please refresh the page.');
+        	 $("#view_status > span").html('Server communication failure. Please refresh the page.');
+         }
+ });
+}
+
+var on_resize = function(){
+	if($("#view_edit_box").hasClass('absolute')){
+		var height = $("#view_edit_box_inside").height() - 27 - 77 - 4;
+		var h2 = Math.ceil(height*4/10);
+		var h1 = height-h2;
+		$("#view_edit_box_inside > .source").css({'height': h1});
+		$("#view_edit_box_inside > .inputoutput").css({'height': h2-5});
+		$("#view_edit_input").css({'height': h2-30});
+		$("#view_edit_output").css({'height': h2-30});
+		$("#right_ad").addClass('absolute');
+		
+		$("#primary-navigation").addClass('navbar-full');
+	} else {
+		var $source = $("#view_edit_box_inside > .source");
+		$source.css({'height': $source.attr('data-relative-height')});
+		var $inout = $("#view_edit_box_inside > .inputoutput");
+		$inout.css({'height': parseInt($inout.attr('data-relative-height')) + 25});
+		$("#view_edit_input").css({'height': $inout.attr('data-relative-height')});
+		$("#view_edit_output").css({'height': $inout.attr('data-relative-height')});
+		$("#right_ad").removeClass('absolute');
+		
+		$("#primary-navigation").removeClass('navbar-full');
+	}
+	
+	var isEditorOn = $('#syntax').is(':checked');
+	if(isEditorOn) {
+		var editor = ace.edit("file_div");
+		//editor.height($("#file_div").height());
+		//editor.width($("#file_div").width());
+		editor.resize();
+	    editor.focus();
+	} else {
+		$('#view_edit_file').focus();
+	}
+}
+
+/**
+ * Ładowanie danych dla new input.
+ */
+function loadNewInputData(link) {
+	var $loader = $("#new-input-insert-loader");
+	$loader.show();
+	queueApplManager.add({
+        url: "/getnewinputdata/" + link,
+        dataType: 'json',
+        success: function(data) {
+        	if(data.status == "ok"){
+				$('#in_new').val(data['input']);
+        	} else {
+        		alertIdeoneGeneratedError(data);
+        	}
+        	$loader.hide();
+        }
+	});
+}
+
+/**
+ * Edycja zgłoszenia ze strony view.
+ */
+function viewEditExecute(only_save) {
+	var isEditorOn = $('#syntax').attr('checked');
+	var source = "";
+
+	if(isEditorOn) {
+		var editor = ace.edit("file_div");
+		source = editor.getSession().getValue();
+	} else {
+		source = $("#view_edit_file").val();
+	}
+	
+	if(only_save == undefined){
+		only_save = 'false';
+	} else {
+		only_save = 'true';
+	}
+	
+	var input = $("#view_edit_input").val();
+	var link = $("#solution_link").val();
+	var lp = $("#edit_solution_number").val();
+	
+	// pokazanie loadera
+	var $loader = $("#view-edit-submit-loader");
+	$loader.show();
+	
+	queueApplManager.add({
+    	type: "POST",
+        url: "/submitedit",
+        data: {'input': input, 'source': source, 'link': link, 'only_save': only_save},
+        dataType: 'json',
+        success: function(data){
+        	
+        	if(data.status == "ok"){
+        		
+        		$("#source").html( data['code'] );
+        		$("#source-text").html( encode64(source) );
+        		$("#stdin-text").html( encode64(input) );
+        		$("#stdin-text").next().find('pre').html(input);
+        		if(only_save == 'true'){
+            		$("#view_edit_save").addClass('disabled');
+            		$loader.hide();
+            		return;
+        		}
+        		
+        		$("#view_edit_output > ul").prepend('<li class="new"><span class="title">waiting...</span><pre class="hidden"></pre></li>');
+	        	statusCodes[link] = -1;
+        		load2(link, '0', true);
+        		
+        	} else if( data.status == 'error' && data.error_code == 'still_running' ){
+        		$("#view_edit_still_running_msg").show();
+        		
+        	} else if( data.status == 'error' && data.error_code == 'pool_cannot_submit_anymore' ){
+    			setPoolMsgsStates(false, true, false);
+    			
+        	} else {
+        		alertIdeoneGeneratedError(data);
+        	}
+        	$("#view_edit_save").addClass('disabled');
+        	$loader.hide();
+    	},
+        error: function(err,a,b){
+        }
+    });
+}
+
+/**
+ * @param what: toggle | show | hide
+ */
+function setInOutErrVisibility($link, what) {
+
+	var id = $link.attr('inouterr_id');
+	if(what == 'toggle') {
+		if( $("#viewhide_show_"+id).hasClass('hidden') ){
+			what='hide';
+		} else {
+			what='show';
+		}
+	}
+	
+	if(what == 'show') {
+		$("#viewhide_show_"+id).addClass('hidden');
+		$("#viewhide_hide_"+id).removeClass('hidden');
+		$("#in_" + id).removeClass('hidden');
+		$("#out_" + id).removeClass('hidden');
+		$("#err_" + id).removeClass('hidden');
+		$("#info_" + id).removeClass('hidden');
+		$("#inouterr_status_" + id).addClass('hidden');
+	}
+	else if(what == 'hide') {
+		$("#viewhide_show_"+id).removeClass('hidden');
+		$("#viewhide_hide_"+id).addClass('hidden');
+		$("#in_" + id).addClass('hidden');
+		$("#out_" + id).addClass('hidden');
+		$("#err_" + id).addClass('hidden');
+		$("#info_" + id).addClass('hidden');
+		$("#inouterr_status_" + id).removeClass('hidden');
+	}
+	
+	return false;
+}
+
+
+
+/**
+ * Wywoływana po naciśnięciu któregoś edit na stronie view.
+ */
+function viewEditButtonAction(action) {
+	var $view_edit_box = $("#view_edit_box"); 
+	var $source = $("#source");
+	if(action == 'show') {
+		$("#view_edit_box_editing_number").text( $("#edit_solution_number").val() );
+		unload_editor = true;
+		if( $view_edit_box.css('display') == 'none' ){
+			$view_edit_box.show();
+			$source.hide();
+			// nie ladujemy edytora bo zrobi to loadViewEditData() po załadowaniu danych
+			// if( $("#syntax").attr('checked') ){
+			// 	loadEditor();
+			// }
+			unload_editor = false;
+		}
+		loadViewEditData(unload_editor);
+		
+		$(".submenu1").addClass('hidden');
+		$(".submenu2").removeClass('hidden');
+		
+		return false;
+	} else {
+		if( $("#syntax").attr('checked') ){
+			unloadEditor();
+		}
+		$view_edit_box.hide();
+		$source.show();
+		
+		$(".submenu1").removeClass('hidden');
+		$(".submenu2").addClass('hidden');
+		
+		return false;
+	}
+}
+
+
+/**
+ * Edycja kodu po kliknięciu przycisku edit z inputu
+ */
+function viewEditButtonInputAction($edit_button) {
+	$("#edit_solution_link").val( $edit_button.attr("sol_link") );
+	$("#edit_solution_number").val( $edit_button.attr("sol_number") );
+	return viewEditButtonAction('show');
+}
+
+
+/**
+ * Edycja kodu po kliknięciu przycisku edit nad/pod source.
+ */
+function viewEditButtonSourceAction() {
+	$("#edit_solution_link").val( $("#max_link").val() );
+	$("#edit_solution_number").val( $("#max_number").val() );
+	return viewEditButtonAction('show');
+}
+
+
+/**
+ * Nowy input na podstawie inputu
+ */
+function viewInputButtonInputAction($input_button) {
+	var link = $input_button.attr("sol_link");
+	$("#new_item_in").show();
+	loadNewInputData(link);
+	return true;
+}
+
+/**
+ * Ładowanie danych na stronie view do edycji zgłoszenia.
+ */
+function loadViewEditData() {
+	var link = $("#solution_link").val();
+	var $loader = $("#view-edit-insert-loader");
+	
+	var isEditorOn = $('#syntax').attr('checked');
+	var source = "";
+	if(isEditorOn) {
+		var editor = ace.edit("file_div");
+		source = editor.getSession().getValue();
+	} else {
+		source = $("#view_edit_file").val();
+	}
+	if(source != '') return;
+	
+	$loader.show();
+	queueApplManager.add({
+        url: "/geteditdata/" + link + "/",
+        dataType: 'json',
+        success: function(data) {
+        	if(data.status == "ok"){
+        		var isEditorOn = $('#syntax').is(':checked');
+        		if(isEditorOn) {
+        			var editor = ace.edit("file_div");
+				    editor.getSession().setValue(data.source);
+				    editor.focus();
+        		} else {
+        			$('#view_edit_file').val(data['source']);
+        			$('#view_edit_file').focus();
+        		}
+				$('#view_edit_input').val(data['input']);
+        	} else {
+        		alertIdeoneGeneratedError(data);
+        	}
+        	$loader.hide();
+        },
+        error: function(){
+        	alert('error');
+        	$loader.hide();
+        }
+	});
+}
+
+
+
+
+
+/**
+ * Usuwa całą stronę (zgłoszenie rodzic i wszystkie potomne).
+ */
+function doDeleteSubmission($button) {
+	var should_confirm = $button.attr("confirm");
+	if(should_confirm == "true") {
+		if(!confirm( $button.attr("confirm_msg") )){
+			return;
+		}
+	}
+	$loader = $( "#" + $button.attr("loader_id") );
+	$loader.show();
+	var link = $button.attr("link");
+	queueApplManager.add({
+		type: "POST",
+        url: "/deletesubmission",
+        data: {'link': link},
+        dataType: 'json',
+        success: function(data){
+        	if(data.status == "ok"){
+	        	$loader.hide();
+	        	window.location = data.redirect;
+        	} else {
+        		alertIdeoneGeneratedError(data);
+        	}
+    	},
+        error: function(err,a,b){
+        }
+	});
+}
+
+
+/**
+ * Ustawia widoczność zgłoszenia.
+ */
+function doSetVisibility($button) {
+	$loader = $( "#" + $button.attr("loader_id") );
+	$loader.show();
+	var link = $button.attr("link");
+	var what = $button.attr("what");
+	queueApplManager.add({
+		type: "POST",
+        url: "/setvisibility",
+        data: {'link': link, 'what': what},
+        dataType: 'json',
+        success: function(data){
+        	if(data.status == "ok"){
+	        	$loader.hide();
+	        	window.location = data.redirect;
+        	} else {
+        		alertIdeoneGeneratedError(data);
+        	}
+    	},
+        error: function(err,a,b){
+        }
+	});
+}
+
+
+
+
+$(document).ready(function(){
+	
+	$("#new_hide").bind('click', function() {
+		$("#new_item_in").toggle();
+	});
+	
+	$("#view_showall").bind("click", function() {
+		$(".inout_link").each(function() {
+			setInOutErrVisibility($(this), 'show');
+		});
+		return false;
+	});
+	
+	$("#view_hideall").bind("click", function() {
+		$(".inout_link").each(function() {
+			setInOutErrVisibility($(this), 'hide');
+		});
+		return false;
+	});
+	
+	// aktualizauje status zgloszenia az sie skonczy uruchamiac
+	load();
+	
+	// usuwanie / ustawianie widoczności zgłoszeń
+	$(".view_set_visibility_link").click(function(){
+		var action = $(this).attr("theaction");
+		if(action == "deletesubmission"){
+			doDeleteSubmission($(this));
+		} else if(action == "setvisibility"){
+			doSetVisibility($(this));
+		}
+		return false;
+	});
+	
+	$(".login_required").click(function(){
+		alert('You have to be logged in to use this function.');
+		return false;
+	});
+	
+	$("#view_edit_button_1, #view_edit_button_2").bind('click', function() {
+		return viewEditButtonSourceAction();
+	});
+	
+	// edycja, zakladka input
+	$("#view_edit_input_btn").bind('click', function() {
+		$("#view_edit_input").show().focus();
+		$("#view_edit_output").hide();
+		$("#view_edit_input_btn").addClass('active');
+		$("#view_edit_output_btn").removeClass('active');
+		return false;
+	});
+	
+	// edycja, zakladka output
+	$("#view_edit_output_btn").bind('click', function() {
+		$("#view_edit_input").hide();
+		$("#view_edit_output").show();
+		$("#view_edit_input_btn").removeClass('active');
+		$("#view_edit_output_btn").addClass('active');
+		return false;
+	});
+	
+	// edycja, przycisk save i submit
+	$("#view_edit_save").click(function() {
+		viewEditExecute(true);
+		return false;
+	});
+	$("#view_edit_execute").click(function() {
+		viewEditExecute();
+		return false;
+	});
+	
+	$("#view_edit_hide").bind('click', function() {
+		return viewEditButtonAction('hide');
+		on_resize();
+	});
+	
+	$("#view_edit_fullscreen").click(function(){
+		if($('#view_edit_box').hasClass('relative')){
+			$('#view_edit_box').removeClass('relative').addClass('absolute');
+		}else{
+			$('#view_edit_box').addClass('relative').removeClass('absolute');
+		}
+		on_resize();
+		return false;
+	});
+	
+	$(window).resize(function() {
+		on_resize();
+	});
+	
+	// edycja notatki
+	$(".view_note_text").on('click', function(){
+		$(this).addClass('hidden');
+		$(this).next().removeClass('hidden').val($(this).html()).focus().next().removeClass('hidden');
+	});
+	$(".view_note_actions_save").on('click', function(event) {
+		var action_url = "/myrecent/action";
+		var sid = $(".view_note_edit").attr('data-sid');
+		var note = $(".view_note_edit").val();
+		var tthis = $(this);
+		queueApplManager.add({
+			type: "POST",
+			url: action_url,
+			data: "a=change_note&sid="+sid+"&note="+note,
+			dataType: 'json',
+			success: function(msg){
+				if( msg.status != "ok"){
+					return this.error();
+				}
+				$(".view_note_text").html(note);
+				
+				$(".view_note_text").removeClass('hidden');
+				$(".view_note_edit").addClass('hidden');
+				$(".view_note_actions").addClass('hidden');
+			},
+            error: function(err,a,b){
+				/*jQuery.facebox*/alert('communication error');
+            }
+		});
+		
+	});
+	$(".view_note_actions_cancel").on('click', function(event) {
+		$(".view_note_text").removeClass('hidden');
+		$(".view_note_edit").addClass('hidden');
+		$(".view_note_actions").addClass('hidden');
+	});
+	
+	// obsluga schowka (niedostepna dla komorek bo to flash)
+	if(!is_mobile){
+		$("#view_copy").show();
+		$("#view_input_copy").show();
+		$("#view_output_copy").show();
+		$("#view_stderr_copy").show();
+		
+		$('#view_copy').zclip({
+	        path:'/gfx2/libs/zclip/ZeroClipboard.swf',
+	        copy:function(){ return decode64($('#source-text').text()); }
+	    });
+		$('#view_input_copy').zclip({
+	        path:'/gfx2/libs/zclip/ZeroClipboard.swf',
+	        copy:function(){ return decode64($('#stdin-text').text()); }
+	    });
+		$('#view_output_copy').zclip({
+	        path:'/gfx2/libs/zclip/ZeroClipboard.swf',
+	        copy:function(){ return $('#output-text').text() }
+	    });
+
+		$('#view_stderr_copy').zclip({
+	        path:'/gfx2/libs/zclip/ZeroClipboard.swf',
+	        copy:function(){ return $('#stderr-text').text() }
+	    });
+	}
+	
+	// uruchamianie edycji zgłoszenia na stronie zgłoszenia jeśli jest taka potrzeba
+	if( "view" == $("#site").val() && window.location.hash == "#view_edit_box" ){
+		$("#view_edit_button_1").click();
+	}
+	
+	// wylaczam affix dla niskich tresci
+	if($(".page-view > .row+.row > .span8").height() > screen.height){
+		$("div[data-spy=_affix]").affix({ offset: { top: 41 }});
+	}
+	
+	
+	$(document).keypress(function(event) {
+		// ctrl+enter (albo cmd+enter na mac os x) = submit
+		// 13 or 10
+		// http://code.google.com/p/chromium/issues/detail?id=79407
+		// http://stackoverflow.com/questions/3532313/jquery-ctrlenter-as-enter-in-text-area
+		if( (event.keyCode == 13 || event.keyCode == 10) && (event.ctrlKey || event.metaKey)) {	
+			if($("#view_edit_execute").is(':visible')){
+				$("#view_edit_execute").click();
+			}
+		}
+		
+	});
+	$(document).keydown(function(event) {
+		// ctrl+s (albo cmd+s na mac os x) = save
+		if( (event.keyCode == 83) && (event.ctrlKey || event.metaKey)) {
+			if($("#view_edit_save").is(':visible')){
+				$("#view_edit_save").click();
+			}
+			event.preventDefault();
+		}
+	});
+	
+	$(document).keyup(function(e) {
+		// esc
+		if (e.keyCode == 27) {
+			if($("#view_edit_box").hasClass('absolute')){
+				$("#view_edit_box").removeClass('absolute').addClass('relative');
+				on_resize();
+			} else if($("#view_edit_save").is(':visible')){
+				$("#view_edit_hide").click();
+			}
+			
+		}   
+	});
+	
+	// "responsive" fb comments widget
+	var load_fb_comments = function(){
+		var $container = $('#fb-comments-root');
+		var container_width = $container.width();
+		var old_width = $container.attr('data-old-width');
+		if(container_width != old_width && !$container.hasClass('hidden')){
+		    $('#fb-comments-root').html('<div class="fb-comments" ' + 
+		    'data-href="'+$("#full_link").val()+'"' +
+		    ' data-width="' + container_width + '"></div>');
+		    FB.XFBML.parse( );
+		    $container.attr('data-old-width', container_width);
+		  }
+	}
+	$(window).bind("load resize", function(){
+		load_fb_comments();
+	});
+	$("#view_comment").on('click', function(){
+		$('#fb-comments-root').toggleClass('hidden');
+		load_fb_comments();
+	});
+});
